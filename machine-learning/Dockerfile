@@ -1,8 +1,8 @@
 ARG DEVICE=cpu
 
-FROM python:3.11-bookworm@sha256:970c99f886b839fc8829289040c1845dadaf2cae46b37acc7710333158ec29b4 AS builder-cpu
+FROM python:3.11-bookworm@sha256:99f4240b31e5b9cf1e792420390b0d531022af3922b3d15681e7b818ca63fe37 AS builder-cpu
 
-FROM python:3.13-slim-trixie@sha256:d168b8d9eb761f4d3fe305ebd04aeb7e7f2de0297cec5fb2f8f6403244621664 AS builder-openvino
+FROM python:3.13-slim-trixie@sha256:0bce18a835a2d7975cb8765dad3bf4d2f0cc7aadb7d3414ce2cba8ef4004bb93 AS builder-openvino
 
 FROM builder-cpu AS builder-cuda
 
@@ -39,12 +39,12 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --extra ${DEVICE} --no-dev --no-editable --no-install-project --compile-bytecode --no-progress --active --link-mode copy
 
-FROM python:3.11-slim-bookworm@sha256:9c6f90801e6b68e772b7c0ca74260cbf7af9f320acec894e26fccdaccfbe3b47 AS prod-cpu
+FROM python:3.11-slim-bookworm@sha256:a2c44ea455da75ce149a1aacb0e48d859277be1e206cfafaba58ef81374d1af1 AS prod-cpu
 
 ENV LD_PRELOAD=/usr/lib/libmimalloc.so.2 \
     MACHINE_LEARNING_MODEL_ARENA=false
 
-FROM python:3.13-slim-trixie@sha256:d168b8d9eb761f4d3fe305ebd04aeb7e7f2de0297cec5fb2f8f6403244621664 AS prod-openvino
+FROM python:3.13-slim-trixie@sha256:0bce18a835a2d7975cb8765dad3bf4d2f0cc7aadb7d3414ce2cba8ef4004bb93 AS prod-openvino
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -yqq ocl-icd-libopencl1 wget && \
